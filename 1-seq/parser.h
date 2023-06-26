@@ -11,7 +11,7 @@ using std::cin;
 using std::cout;
 using std::endl;
 
-extern int reg[32], mem[300003], pc;
+extern unsigned int reg[32], mem[300003], pc;
 
 class Parser {
 public:
@@ -27,18 +27,21 @@ public:
                 ss >> std::hex >> addr;
             }
             else if (isdigit(tmp[0]) || (tmp[0] >= 'A' && tmp[0] <= 'F')) {
-                int x[4];
+                unsigned int x[4];
                 while (ss >> std::hex >> x[0]) {
-                    ss >> std::hex >> x[1];
-                    ss >> std::hex >> x[2];
-                    ss >> std::hex >> x[3];
-                    mem[addr++] = (x[3] << 24) | (x[2] << 16) | (x[1] << 8) | x[0];
+                    mem[addr++] = x[0];
+                    for (int i = 1; i <= 3; ++i) {
+                        ss >> std::hex >> x[i];
+                        mem[addr++] = x[i];
+                    }
                 }
             }
         }
     }
-    void Interpret() {
-
+    unsigned int GetCommand() {
+        unsigned int ret = readMemory(pc);
+        pc += 4;
+        return ret;
     }
 };
 
