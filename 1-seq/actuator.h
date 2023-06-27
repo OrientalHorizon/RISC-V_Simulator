@@ -60,6 +60,7 @@ public:
                 pc = reg[rs1] + imm;
                 pc >>= 1; pc <<= 1;
                 // pc -= 4;
+                if (!rd) rd = reg[1];
                 reg[rd] = t;
             }
             break;
