@@ -43,20 +43,23 @@ public:
                     imm[i] = tmp_bs[i];
                 }
                 imm[20] = tmp_bs[31];
-                reg[rd] = pc + 4;
+                reg[rd] = pc;
                 unsigned tmp = extend(imm.to_ulong(), 20);
-                pc += tmp;
+                pc += tmp - 4;
             }
             break;
 
             case 0b1100111: {
                 // JALR
+                // cout << cmd << endl;
                 unsigned int rd = (cmd >> 7u) & 0x1Fu;
                 unsigned int rs1 = (cmd >> 15u) & 0x1Fu;
                 unsigned int imm = (cmd >> 20u) & 0xFFFu;
                 imm = extend(imm, 11);
-                unsigned t = pc + 4;
-                pc = (reg[rs1] + imm) & 0xFFFFFFFEu;
+                unsigned int t = pc;
+                pc = reg[rs1] + imm;
+                pc >>= 1; pc <<= 1;
+                // pc -= 4;
                 reg[rd] = t;
             }
             break;
@@ -81,32 +84,33 @@ public:
                 switch (func) {
                     case 0x0u: {
                         // BEQ
-                        if (reg[rs1] == reg[rs2]) pc += tmp;
+                        if (reg[rs1] == reg[rs2]) pc += tmp - 4;
                         break;
                     }
                     case 0x1u: {
                         // BNE
-                        if (reg[rs1] != reg[rs2]) pc += tmp;
+                        if (reg[rs1] != reg[rs2]) pc += tmp - 4;
                         break;
                     }
                     case 0x4u: {
                         // BLT
-                        if ((signed)reg[rs1] < (signed)reg[rs2]) pc += tmp;
+                        if ((signed)reg[rs1] < (signed)reg[rs2]) pc += tmp - 4;
                         break;
                     }
                     case 0x5u: {
                         // BGE
-                        if ((signed)reg[rs1] >= (signed)reg[rs2]) pc += tmp;
+                        if ((signed)reg[rs1] >= (signed)reg[rs2]) pc += tmp - 4;
                         break;
                     }
                     case 0x6u: {
                         // BLTU
-                        if (reg[rs1] < reg[rs2]) pc += tmp;
+                        if (reg[rs1] < reg[rs2]) pc += tmp - 4;
+                        // cout << std::dec << reg[rs1] << " " << reg[rs2] << endl;
                         break;
                     }
                     case 0x7u: {
                         // BGEU
-                        if (reg[rs1] >= reg[rs2]) pc += tmp;
+                        if (reg[rs1] >= reg[rs2]) pc += tmp - 4;
                         break;
                     }
                 }
@@ -237,7 +241,9 @@ public:
                     case 0x1u: {
                         // SLLI
                         unsigned shamt = imm & 0b111111u;
+                        // cout << rd << " " << rs1 << " " << shamt << endl;
                         reg[rd] = reg[rs1] << shamt;
+                        break;
                     }
                     case 0x5u: {
                         // SRLI, SRAI
@@ -250,6 +256,7 @@ public:
                             // SRAI
                             reg[rd] = (signed)reg[rs1] >> (signed)shamt;
                         }
+                        break;
                     }
                 }
             }

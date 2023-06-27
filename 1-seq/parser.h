@@ -20,6 +20,7 @@ public:
         std::string tmp;
         int addr = 0;
         while (getline(cin, tmp)) {
+            // cout << tmp << endl;
             ss.clear();
             ss << tmp;
             if (tmp[0] == '@') {
@@ -30,9 +31,11 @@ public:
                 unsigned int x[4];
                 while (ss >> std::hex >> x[0]) {
                     mem[addr++] = x[0];
+                    // cout << mem[addr - 1] << endl;
                     for (int i = 1; i <= 3; ++i) {
                         ss >> std::hex >> x[i];
                         mem[addr++] = x[i];
+                        // cout << mem[addr - 1] << endl;
                     }
                 }
             }
