@@ -43,7 +43,7 @@ public:
                     imm[i] = tmp_bs[i];
                 }
                 imm[20] = tmp_bs[31];
-                if (rd == 0u) rd = reg[1];
+                if (rd == 0u) rd = 1u;
                 reg[rd] = pc;
                 unsigned tmp = extend(imm.to_ulong(), 20);
                 pc += tmp - 4;
@@ -61,7 +61,7 @@ public:
                 pc = reg[rs1] + imm;
                 pc >>= 1; pc <<= 1;
                 // pc -= 4;
-                if (rd == 0u) rd = reg[1];
+                if (rd == 0u) rd = 1u;
                 reg[rd] = t;
             }
             break;
